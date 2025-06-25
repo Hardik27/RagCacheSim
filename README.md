@@ -15,8 +15,8 @@ and reports metrics such as hit-rate, average latency, remote-check count, and B
 
 ## 1. Quick start
 
-git clone https://github.com/Hardik27/Distributed-Semantic-Cache-DSC-Simulator.git
-cd Distributed-Semantic-Cache-DSC-Simulator
+git clone https://github.com/Hardik27/RagCacheSim.git
+cd ragcachesim
 
 ### install in editable mode (adds `ragcachesim` to PATH)
 pip install -e .
