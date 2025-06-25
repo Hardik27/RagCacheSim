@@ -1,0 +1,7 @@
+simpy>=4.0
+numpy>=1.23
+faker>=24.0
+pybloom-live>=4.0
+scikit-learn>=1.4
+pandas>=2.2
+tabulate>=0.9

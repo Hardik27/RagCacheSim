@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name            = "ragcachesim"
+version         = "1.0.0"
+description     = "Simulator for evaluating cache strategies in distributed RAG systems"
+authors         = [{name="Hardik D. Ruparel", email="hruparel@uci.edu"}]
+license         = {text="GPL-3.0-or-later"}
+readme          = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+  "simpy>=4.0",
+  "numpy>=1.23",
+  "faker>=24.0",
+  "pybloom-live>=4.0",
+  "scikit-learn>=1.4",
+  "pandas>=2.2",
+  "tabulate>=0.9"
+]
+
+[project.scripts]
+ragcachesim = "ragcachesim.simulator:main"
