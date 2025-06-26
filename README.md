@@ -16,6 +16,7 @@ and reports metrics such as hit-rate, average latency, remote-check count, and B
 ## 1. Quick start
 
 git clone https://github.com/Hardik27/RagCacheSim.git
+
 cd ragcachesim
 
 ### install in editable mode (adds `ragcachesim` to PATH)
@@ -91,4 +92,4 @@ Pull requests welcome! Open issues for:
 
 
 ## 5. License
-Released under the GNU GPL v3. See LICENSE for details.
+Released under the **MIT License**. See license.txt and https://opensource.org/license/MIT for details.

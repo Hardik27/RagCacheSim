@@ -1,13 +1,14 @@
+#!/usr/bin/env python3
 """
 ragcachesim.simulator
-A discrete-event simulator for evaluating cache strategies in
+Discrete-event simulator for evaluating cache strategies in
 distributed Retrieval-Augmented Generation (RAG) clusters.
 
 Author : Hardik Ruparel · May-2025
 """
 
 from __future__ import annotations
-import simpy, numpy as np, logging, argparse
+import simpy, numpy as np, argparse, sys, logging          # ← logging & sys
 from faker import Faker
 from pybloom_live import ScalableBloomFilter
 from sklearn.metrics.pairwise import cosine_similarity
@@ -15,6 +16,16 @@ import pandas as pd
 from tabulate import tabulate
 from hashlib import blake2b
 
+# ─────────────────────────────────────────  GLOBAL LOGGER  ──────────────────
+log = logging.getLogger("ragcachesim")
+log.setLevel(logging.INFO)
+_hdlr = logging.StreamHandler(sys.stdout)
+_hdlr.setFormatter(logging.Formatter("%(asctime)s  %(message)s",
+                                     datefmt="%H:%M:%S"))
+log.addHandler(_hdlr)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ---------------- default parameters ----------------------------------------
 DEFAULTS = dict(
     num_nodes   = 4,
     num_queries = 250_000,
@@ -32,10 +43,6 @@ T_EMB, T_LOC, T_NET, T_RET, T_LLM = 0.002, 0.001, 0.005, 0.050, 0.100
 
 faker = Faker()
 rng   = np.random.default_rng(42)
-logging.basicConfig(
-    format="%(asctime)s  %(message)s",
-    level=logging.INFO, datefmt="%H:%M:%S"
-)
 
 # ---------------- helpers ---------------------------------------------------
 def fake_q() -> str:
@@ -138,7 +145,7 @@ def run(cfg: str, args: argparse.Namespace) -> pd.DataFrame:
         nonlocal rr_ptr
         for i in range(args.num_queries):
             if i % args.print_every == 0 and i > 0:
-                logging.info(f"{cfg}: generated {i} queries")
+                log.info(f"{cfg}: generated {i} queries")
 
             dup  = rng.random() < args.dup_rate
             text = rng.choice(dup_pool) if dup else fake_q()
@@ -189,20 +196,27 @@ def build_parser() -> argparse.ArgumentParser:
         if isinstance(v, float) and v < 1: typ = float
         p.add_argument(arg, default=v, type=typ,
                        help=f"default={v}")
-    p.add_argument('--csv', metavar="FILE",
+    p.add_argument('--csv',   metavar="FILE",
                    help="Write summary CSV to FILE instead of stdout")
+    p.add_argument('--quiet', action='store_true',
+                   help="Suppress progress logs")
     return p
 
 def main() -> None:
     args = build_parser().parse_args()
+
+    if args.quiet:
+        log.setLevel(logging.ERROR)
+
+    log.info("Launching RAGCacheSim …")
     dfs  = [run(c, args) for c in ("CEC", "IC", "DSC")]
     all_df = pd.concat(dfs, ignore_index=True)
     summary = all_df.groupby("Config").agg(
-        Queries=('Queries','sum'),
-        HitRate=('HitRate','mean'),
-        Lat_ms =('Latency_ms','mean'),
-        RemoteChecks=('RemoteChecks','sum'),
-        FalsePos=('FalsePosPct','mean')
+        Queries      = ('Queries','sum'),
+        HitRate      = ('HitRate','mean'),
+        Lat_ms       = ('Latency_ms','mean'),
+        RemoteChecks = ('RemoteChecks','sum'),
+        FalsePos     = ('FalsePosPct','mean')
     ).reset_index()
 
     if args.csv:
