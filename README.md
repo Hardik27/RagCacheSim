@@ -45,7 +45,7 @@ Grab the executable from `dist/ragcachesim`.
 | `--queries`    | Total queries to simulate                    | 250000      |
 | `--print-every`| Progress log interval                        | 50000       |
 | `--dup-rate`   | Fraction of semantically duplicated queries  | 0.35        |
-| `--cache-size` | Per-node semantic cache size (entries)       | 3           |
+| `--cache-size` | Per-node semantic cache size (entries)       | 30           |
 | `--emb-dim`    | Embedding dimensionality                     | 128         |
 | `--thresh`     | Cosine-similarity threshold for semantic hit | 0.65        |
 | `--sync-int`   | Bloom summary push period (seconds)          | 0.5         |
@@ -56,20 +56,31 @@ Run `ragcachesim --help` for full auto-generated help.
 
 ## 3. How It Works (Two-Minute Tour)
 
-- **Workload Generator**:  
-  Emits synthetic prompts with `dup_rate` paraphrases to mimic real traffic
-- **Node Model**:  
+- **Workload Generator**  
+  Synthesizes prompts with configurable:
+  - Semantic similarity distribution
+  - Duplicate rate (`--dup-rate`)
+  - Query arrival patterns (`--inter-gap`)
+
+- **Node Processing**  
   Each RAG node:
-  1. Embeds queries
-  2. Performs local cache lookup
-  3. Optionally forwards to peers on cache miss
+  1. Embeds queries using FastEmbed
+  2. Checks local semantic cache (LRU policy)
+  3. On cache miss:
+     - Forwards to peers (DSC strategy)
+     - Falls back to Retriever+LLM
+
 - **Cache Implementations**:
-  - LRU-ordered semantic cache (vector similarity) per node
-  - Bloom filters summarize keys (broadcast every `sync_int` seconds in DSC)
-- **Metrics Collection**:  
-  Outputs GitHub-table summary or CSV
-- **Simulation Engine**:  
-  Built on SimPy 4 (time advances via `yield env.timeout(...)`; no threads)
+  - **CEC (Centralized Exact-match)**: Global key-value store for identical queries
+  - **IC (Independent Semantic)**: Node-local vector similarity matching (`--thresh`)
+  - **DSC (Distributed Coordination)**: Combines IC with Bloom filter sync (`--sync-int`)
+
+- **Metrics Collection**:
+  - Cache hit rates (local/remote)
+  - Latency decomposition
+  - False positive rates
+  - Network overhead
+
 
 ## 4. Contributing
 
