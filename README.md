@@ -88,13 +88,21 @@ Run `ragcachesim --help` for full auto-generated help.
 A typical run of RAGCacheSim with produces the following results:
 
 ragcachesim --num-nodes 8 --num-queries 10000 --cache-size 15 --print-every 2500
+
 22:51:25  Launching RAGCacheSim …
+
 22:51:26  IC: generated 2500 queries
+
 22:51:27  IC: generated 5000 queries
+
 22:51:27  IC: generated 7500 queries
+
 22:51:29  DSC: generated 2500 queries
+
 22:51:30  DSC: generated 5000 queries
+
 22:51:30  DSC: generated 7500 queries
+
 |    | Config   |   Queries |   HitRate |    Lat_ms |   RemoteChecks |   FalsePos |
 |----|----------|-----------|-----------|-----------|----------------|------------|
 |  0 | CEC      |      1304 |   2.24375 | 148.613   |              0 |          0 |
