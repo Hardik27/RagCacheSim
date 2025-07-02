@@ -26,7 +26,7 @@ pip install -e .
 ragcachesim
 
 ### run an 8-node, 100k-query experiment with larger caches
-ragcachesim --nodes 8 --queries 100000 --cache-size 5
+ragcachesim --num-nodes 8 --num-queries 100000 --cache-size 5
 
 ### export summary as CSV
 ragcachesim --csv results.csv
@@ -83,7 +83,26 @@ Run `ragcachesim --help` for full auto-generated help.
   - Network overhead
 
 
-## 4. Contributing
+## 4. Sample Output
+
+A typical run of RAGCacheSim with produces the following results:
+
+ragcachesim --num-nodes 8 --num-queries 10000 --cache-size 15 --print-every 2500
+22:51:25  Launching RAGCacheSim …
+22:51:26  IC: generated 2500 queries
+22:51:27  IC: generated 5000 queries
+22:51:27  IC: generated 7500 queries
+22:51:29  DSC: generated 2500 queries
+22:51:30  DSC: generated 5000 queries
+22:51:30  DSC: generated 7500 queries
+|    | Config   |   Queries |   HitRate |    Lat_ms |   RemoteChecks |   FalsePos |
+|----|----------|-----------|-----------|-----------|----------------|------------|
+|  0 | CEC      |      1304 |   2.24375 | 148.613   |              0 |          0 |
+|  1 | DSC      |     10000 |  99.85    |   3.22375 |              0 |          0 |
+|  2 | IC       |     10000 |  99.85    |   3.2225  |              0 |          0 |
+
+
+## 5. Contributing
 
 Pull requests welcome! Open issues for:
 - New cache policies (LRU-PQ, LFU, TinyLFU)
@@ -91,5 +110,5 @@ Pull requests welcome! Open issues for:
 - Additional metrics/visualizations
 
 
-## 5. License
+## 6. License
 Released under the **MIT License**. See license.txt and https://opensource.org/license/MIT for details.
