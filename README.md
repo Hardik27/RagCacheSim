@@ -17,7 +17,7 @@ and reports metrics such as hit-rate, average latency, remote-check count, and B
 
 git clone https://github.com/Hardik27/RagCacheSim.git
 
-cd ragcachesim
+cd RagCacheSim
 
 ### install in editable mode (adds `ragcachesim` to PATH)
 pip install -e .
